@@ -259,6 +259,10 @@ window.onload = () => {
                 if (province) {
                     const bbox = symbol.getBoundingClientRect();
                     if (!map.querySelector(`${id.substr(1)}_text_ref`)) {
+                        /*
+                            <symbol id="Kolinau" viewBox="-29.917 -48.177 59.833 96.352">
+                                <g>
+                        */
                         const transform = symbol.transform.baseVal;
 
                         const provinceText = `${province.name || id.substr(1)}\n(${province.level}/${province.sourcePotential})`;
@@ -371,6 +375,39 @@ window.onload = () => {
         return "#"+(0x1000000+(Math.round((R2-R1)*p)+R1)*0x10000+(Math.round((G2-G1)*p)+G1)*0x100+(Math.round((B2-B1)*p)+B1)).toString(16).substr(1);
     }
 
+    const keydownEventListener = (event) => {
+        switch (event.key) {
+            case '+':
+            case '=':
+                gesture.scale += 0.5 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+            case '-':
+            case '_':
+                gesture.sale -= 0.5 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+            case 'ArrowUp':
+                gesture.posY += 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+            case 'ArrowDown':
+                gesture.posY -= 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+            case 'ArrowLeft':
+                gesture.posX += 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+            case 'ArrowRight':
+                gesture.posX -= 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                event.preventDefault();
+                break;
+        }
+        render();
+    }
+    window.addEventListener('keydown', (event) => console.log('window event', 'keydownEventListener') || keydownEventListener(event));
+
     /**
      * Zoom on wheel events. Trackpad pinch is a mouse wheel event with ctrl key pressed.
      **/
@@ -386,8 +423,7 @@ window.onload = () => {
 
         render();
     };
-    window.addEventListener('wheel', wheelEventListener);
-    mapContainer.contentDocument.addEventListener('wheel', wheelEventListener);
+    mapContainer.contentDocument.addEventListener('wheel', (event) => console.log('mapContainer event', 'wheelEventListener') || wheelEventListener(event));
 
     /**
      * Start monitoring gesture start position to identify amount of X-Y panning and rotation
@@ -399,8 +435,7 @@ window.onload = () => {
         gesture.startRotation = gesture.rotation;
         gesture.startScale = gesture.scale;
     };
-    window.addEventListener('gesturestart', gesturestartEventListener);
-    mapContainer.contentDocument.addEventListener('gesturestart', gesturestartEventListener);
+    mapContainer.contentDocument.addEventListener('gesturestart', (event) => console.log('mapContainer event', 'gesturestartEventListener') || gesturestartEventListener(event));
 
     /**
      * Update gesture position dif from start to identify X-Y panning and rotation.
@@ -416,8 +451,7 @@ window.onload = () => {
 
         render();
     };
-    window.addEventListener('gesturechange', gesturechangeEventListener);
-    mapContainer.contentDocument.addEventListener('gesturechange', gesturechangeEventListener);
+    mapContainer.contentDocument.addEventListener('gesturechange', (event) => console.log('mapContainer event', 'gesturechangeEventListener') || gesturechangeEventListener(event));
 
     /**
      * Prevent default gesture actions (like page scroll or navigation)
@@ -425,8 +459,7 @@ window.onload = () => {
     const gestureendEventListener = (event) => {
         event.preventDefault();
     };
-    window.addEventListener('gestureend', gestureendEventListener);
-    mapContainer.contentDocument.addEventListener('gestureend', gestureendEventListener);
+    mapContainer.contentDocument.addEventListener('gestureend', (event) => console.log('mapContainer event', 'gestureendEventListener') || gestureendEventListener(event));
 
     /**
      * Identify the polygon under the mouse and highlight it
@@ -463,8 +496,7 @@ window.onload = () => {
                     });
             });
     };
-    window.addEventListener('mousedown', clickEventListener);
-    mapContainer.contentDocument.addEventListener('mousedown', clickEventListener);
+    mapContainer.contentDocument.addEventListener('mousedown', (event) => console.log('mapContainer event', 'clickEventListener') || clickEventListener(event));
 
     const mousemoveEventListener = (event) => {
         event.preventDefault();
@@ -495,6 +527,5 @@ window.onload = () => {
                 }
             });
     };
-    window.addEventListener('mousemove', mousemoveEventListener);
-    mapContainer.contentDocument.addEventListener('mousemove', mousemoveEventListener);
+    mapContainer.contentDocument.addEventListener('mousemove', (event) => console.log('mapContainer event', 'mousemoveEventListener') || mousemoveEventListener(event));
 };
