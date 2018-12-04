@@ -62,10 +62,10 @@ window.domains = {
             name: 'Jarldom of Selena Clairmonte',
             regent: 'Selena Clairmonte',
         },
-        'Dark Raider': {
-            key: 'Dark Raider',
-            name: 'Jarldom of Dark Raider',
-            regent: 'Dark Raider',
+        'Gautrek Raknarsson': {
+            key: 'Gautrek Raknarsson',
+            name: 'Jarldom of Gautrek Raknarsson',
+            regent: 'Gautrek Raknarsson',
         },
     },
     regents: {
@@ -90,7 +90,7 @@ window.domains = {
                 'Rainer',
                 'Daegandal',
                 'Selena Clairmonte',
-                'Dark Raider',
+                'Gautrek Raknarsson',
             ],
         },
         'Thorin Ungarth': {
@@ -129,9 +129,9 @@ window.domains = {
             player: 'Redbarron219',
             lord: 'Nilsvaar',
         },
-        'Dark Raider': {
-            key: 'Dark Raider',
-            name: 'Dark Raider',
+        'Gautrek Raknarsson': {
+            key: 'Gautrek Raknarsson',
+            name: 'Gautrek Raknarsson',
             player: 'DarK_RaideR',
             lord: 'Nilsvaar',
         }
@@ -201,15 +201,16 @@ window.domains = {
             holdings: {
                 law: {'Nilsvaar': 1},
                 temple: {'Oaken Grove': 0},
+                guild: {'Bjorn': 0},
             },
         },
         Tarlhaas: {
-            domain: 'Dark Raider',
+            domain: 'Gautrek Raknarsson',
             level: 3,
             sourcePotential: 4,
             holdings: {
-                law: {'Dark Raider': 1},
-                temple: {'Dark Raider': 1},
+                law: {'Gautrek Raknarsson': 1},
+                temple: {'Gautrek Raknarsson': 1},
             },
         },
         Vaaltrand: {

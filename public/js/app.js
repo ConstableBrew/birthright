@@ -115,6 +115,8 @@ window.onload = () => {
     const hiddenProvinces = [];
     const allProvinces = map.querySelectorAll('#Anuire use, #Rjurik use, #Brecht use, #Kinasi use, #Voosgard use');
 
+    const rawDataTextarea = document.getElementById('raw_data');
+
     setup();
     render();
 
@@ -376,32 +378,43 @@ window.onload = () => {
     }
 
     const keydownEventListener = (event) => {
+        const scaleFactor = Math.log(gesture.scale * 2 + 1)/0.6931471806;
         switch (event.key) {
             case '+':
             case '=':
-                gesture.scale += 0.5 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.scale += 0.25 * scaleFactor;
                 event.preventDefault();
                 break;
             case '-':
             case '_':
-                gesture.sale -= 0.5 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.scale -= 0.25 * scaleFactor;
                 event.preventDefault();
                 break;
             case 'ArrowUp':
-                gesture.posY += 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.posY += 50 * scaleFactor;
                 event.preventDefault();
                 break;
             case 'ArrowDown':
-                gesture.posY -= 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.posY -= 50 * scaleFactor;
                 event.preventDefault();
                 break;
             case 'ArrowLeft':
-                gesture.posX += 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.posX += 50 * scaleFactor;
                 event.preventDefault();
                 break;
             case 'ArrowRight':
-                gesture.posX -= 50 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+                gesture.posX -= 50 * scaleFactor;
                 event.preventDefault();
+                break;
+            case 'Escape':
+                gesture.rotation = 0;
+                gesture.scale = 1;
+                gesture.posX = 0;
+                gesture.posY = 0;
+                gesture.startRotation = 0;
+                gesture.startScale = 1;
+                gesture.startX = 0;
+                gesture.startY = 0;
                 break;
         }
         render();
@@ -413,12 +426,12 @@ window.onload = () => {
      **/
     const wheelEventListener = (event) => {
         event.preventDefault();
-
+        const scaleFactor = Math.log(gesture.scale * 2 + 1)/0.6931471806;
         if (event.ctrlKey) {
-            gesture.scale -= event.deltaY * 0.01 * Math.log(gesture.scale * 2 + 1)/0.6931471806;
+            gesture.scale -= event.deltaY * 0.01 * scaleFactor;
         } else {
-            gesture.posX -= event.deltaX * 2;
-            gesture.posY -= event.deltaY * 2;
+            gesture.posX -= Math.sign(event.deltaX) * 50 * scaleFactor;
+            gesture.posY -= Math.sign(event.deltaY) * 50 * scaleFactor;
         }
 
         render();
@@ -518,6 +531,8 @@ window.onload = () => {
             .forEach((symbol) => {
                 const id = symbol.href.animVal;
                 if (!selectedProvinces.some((selectedId) => selectedId === id)) {
+                    const province = window.domains.provinces[id.substr(1)];
+                    rawDataTextarea.value = JSON.stringify(province, null, 2);
                     hoveredProvinces.push(id);
                     map.querySelectorAll(`${id} polygon`)
                         .forEach((polygon) => {
