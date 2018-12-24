@@ -67,6 +67,21 @@ window.domains = {
             name: 'Jarldom of Gautrek Raknarsson',
             regent: 'Gautrek Raknarsson',
         },
+        'Ruvin': {
+            key: 'Ruvin',
+            name: 'Jarldom of Ruvin',
+            regent: 'Ruvin',
+        },
+        'Lars Pedresen': {
+            key: 'Lars Pedresen',
+            name: 'Jarldom of Lars Pedresen',
+            regent: 'Lars Pedresen',
+        },
+        'Ulrich': {
+            key: 'Ulrich',
+            name: 'Jarldom of Ulrich',
+            regent: 'Ulrich',
+        },
     },
     regents: {
         'Gretta Seligsdotter': {
@@ -84,13 +99,17 @@ window.domains = {
             name: 'Nilsvaar',
             tooltip: 'MRj; F11; Re, major, 15; LN',
             vassals: [
-                'Thorin Ungarth',
-                'Rhaegar Taengress',
                 'Bjorn',
-                'Rainer',
                 'Daegandal',
-                'Selena Clairmonte',
                 'Gautrek Raknarsson',
+                'Lars Pedresen',
+                'Rainer',
+                'Rhaegar Taengress',
+                'Ruvin',
+                'Selena Clairmonte',
+                'Sigfrid',
+                'Thorin Ungarth',
+                'Ulrich',
             ],
         },
         'Thorin Ungarth': {
@@ -134,11 +153,42 @@ window.domains = {
             name: 'Gautrek Raknarsson',
             player: 'DarK_RaideR',
             lord: 'Nilsvaar',
-        }
+        },
+        'Ruvin': {
+            key: 'Ruvin',
+            name: 'Ruvin',
+            player: 'NPC',
+            lord: 'Nilsvaar',
+        },
+        'Lars Pedresen': {
+            key: 'Lars Pedresen',
+            name: 'Lars Pedresen',
+            player: 'kadeton',
+            lord: 'Nilsvaar',
+        },
+        'Sigfrid': {
+            key: 'Sigfrid',
+            name: 'Sigfrid the Winter',
+            player: 'Bleak',
+            lord: 'Nilsvaar',
+        },
+        'Ærnmund': {
+            key: 'Ærnmund',
+            name: 'Ærnmund',
+            player: 'NPC',
+        },
+        'Ulrich': {
+            key: 'Ulrich',
+            name: 'Ulrich',
+            player: 'NPC',
+            lord: 'Nilsvaar',
+        },
     },
     provinces: {
         Belik: {
-            domain: 'Nilsvaar',
+            key: 'Belik',
+            name: 'Belik',
+            domain: 'Ruvin',
             level: 0,
             sourcePotential: 7,
             holdings: {
@@ -147,41 +197,51 @@ window.domains = {
             },
         },
         Djurik: {
+            key: 'Djurik',
+            name: 'Djurik',
             domain: 'Thorin Ungarth',
             level: 2,
             sourcePotential: 5,
             holdings: {
                 law: {'Nilsvaar': 1},
-                temple: {'Thorin Ungarth': 1},
+                temple: {'Temple of Moradin': 1},
                 guild: {'Thorin Ungarth': 1},
             },
         },
         Freikstaad: {
+            key: 'Freikstaad',
+            name: 'Freikstaad',
             domain: 'Rhaegar Taengress',
             level: 2,
             sourcePotential: 5,
             holdings: {
-                law: {'Nilsvaar': 0, 'Rhaegar Taengress': 1},
+                law: {'Nilsvaar': 1, 'Rhaegar Taengress': 1},
                 temple: {'Emerald Spiral': 0},
                 guild: {'Rhaegar Taengress': 1},
             },
         },
         Hruthjik: {
+            key: 'Hruthjik',
+            name: 'Hruthjik',
             domain: 'Nilsvaar',
             level: 1,
             sourcePotential: 6,
             holdings: {
-                law: {'Nilsvaar': 1},
+                law: {'Nilsvaar': 0, 'Ærnmund': 1},
                 temple: {'Emerald Spiral': 1},
             },
         },
         Junfjor: {
+            key: 'Junfjor',
+            name: 'Junfjor',
             domain: 'Nilsvaar',
             level: 0,
             sourcePotential: 7,
             holdings: {},
         },
         Kopingdal: {
+            key: 'Kopingdal',
+            name: 'Kopingdal',
             domain: 'Nilsvaar',
             level: 4,
             sourcePotential: 3,
@@ -191,7 +251,8 @@ window.domains = {
             },
         },
         Svinoy_island: {
-            name: 'Sivnoy Island',
+            key: 'Svinoy_island',
+            name: 'Svinoy island',
             domain: 'Bjorn',
             level: 1,
             sourcePotential: 6,
@@ -200,11 +261,13 @@ window.domains = {
             },
             holdings: {
                 law: {'Nilsvaar': 1},
-                temple: {'Oaken Grove': 0},
-                guild: {'Bjorn': 0},
+                temple: {'Oaken Grove': 1},
+                guild: {'Bjorn': 1},
             },
         },
         Tarlhaas: {
+            key: 'Tarlhaas',
+            name: 'Tarlhaas',
             domain: 'Gautrek Raknarsson',
             level: 3,
             sourcePotential: 4,
@@ -214,14 +277,24 @@ window.domains = {
             },
         },
         Vaaltrand: {
-            domain: 'Nilsvaar',
-            level: 0,
-            sourcePotential: 7,
+            key: 'Vaaltrand',
+            name: 'Vaaltrand',
+            domain: 'Sigfrid',
+            level: 2,
+            sourcePotential: 5,
             holdings: {
+                law: {'Sigfrid': 2},
                 temple: {'Emerald Spiral': 0},
+            },
+            military: {
+                'Sigfrid': [
+                    {name: 'Infantry'},
+                ],
             },
         },
         Dhovjiir: {
+            key: 'Dhovjiir',
+            name: 'Dhovjiir',
             domain: 'Nilsvaar',
             level: 1,
             sourcePotential: 6,
@@ -230,31 +303,84 @@ window.domains = {
             },
         },
         Jharvild: {
+            key: 'Jharvild',
+            name: 'Jharvild',
             domain: 'Nilsvaar',
             level: 0,
             sourcePotential: 6,
+            holdings: {
+                law: {'Ærnmund': 0},
+            },
+            constructions: {
+                roads: 1,
+            },
         },
         Kvigmarheim: {
+            key: 'Kvigmarheim',
+            name: 'Kvigmarheim',
             domain: 'Nilsvaar',
             level: 4,
             sourcePotential: 2,
             holdings: {
-                law: {Nilsvaar: 2},
+                law: {Nilsvaar: 3, 'Ærnmund': 1},
                 temple: {'Emerald Spiral': 1},
                 guild: {Nilsvaar: 2},
             },
+            constructions: {
+                fortification: 2,
+                roads: 1,
+            },
+            trade: {
+                'Kantswatch': {
+                    'guilds': [
+                        {'Nilsvaar': 2},
+                        {'Volse Redbedtehr': 2}
+                    ],
+                    'contested': true,
+                    'cultures': ['Brecht', 'Rjurik'],
+                },
+                'Chelyatev': {
+                    'guilds': [
+                        {'Nilsvaar': 2},
+                        {'Markovlan Saravok': 1}
+                    ],
+                    'contested': true,
+                    'cultures': ['Rjurik', 'Vos'],
+                },
+            },
         },
         Sjalikfjord: {
-            domain: 'Nilsvaar',
-            level: 0,
-            sourcePotential: 7,
+            key: 'Sjalikfjord',
+            name: 'Sjalikfjord',
+            domain: 'Lars Pedresen',
+            level: 1,
+            sourcePotential: 6,
+            holdings: {
+                law: {'Lars Pedresen': 1}
+            },
+            constructions: {
+                roads: 1,
+            },
+            military: {
+                'Lars Pedresen': [
+                    {name: 'Irregulars'},
+                    {name: 'Longship', notes: 'Skyggehjertet'}
+                ],
+            },
         },
         Virskaap: {
-            domain: 'Nilsvaar',
+            key: 'Virskaap',
+            name: 'Virskaap',
+            domain: 'Ulrich',
             level: 0,
             sourcePotential: 7,
+            holdings: {
+                law: {'Nilsvaar': 0},
+            },
         },
         'Zeph-na': {
+            key: 'Zeph-na',
+            name: 'Zeph-na',
             domain: 'Selena Clairmonte',
             level: 4,
             sourcePotential: 4,
@@ -268,6 +394,8 @@ window.domains = {
             },
         },
         Nulthan: {
+            key: 'Nulthan',
+            name: 'Nulthan',
             domain: 'Rainer',
             level: 2,
             sourcePotential: 7,
@@ -282,6 +410,8 @@ window.domains = {
             },
         },
         'Raka-zai': {
+            key: 'Raka-zai',
+            name: 'Raka-zai',
             domain: 'Daegandal',
             level: 1,
             sourcePotential: 8,

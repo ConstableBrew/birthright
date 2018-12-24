@@ -66,17 +66,25 @@ window.onload = () => {
     };
     const swatches = [
         [
-            '#8dd3c7',
-            '#bebada',
-            '#fb8072',
+            '#5D3A00',
+            '#686963',
             '#80b1d3',
-            '#fdb462',
+            '#8AA29E',
+            '#8dd3c7',
+            '#9B8816',
             '#b3de69',
-            '#fccde5',
-            '#ffffb3',
-            '#d9d9d9',
             '#bc80bd',
+            '#BCA0BC',
+            '#bebada',
             '#ccebc5',
+            '#d9d9d9',
+            '#DB5461',
+            '#F98948',
+            '#F9B9F2',
+            '#F9EA9A',
+            '#fb8072',
+            '#fccde5',
+            '#fdb462',
             '#ffed6f',
         ],
         [ // blues
@@ -140,40 +148,9 @@ window.onload = () => {
         const textContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         textContainer.setAttribute('id', 'text_container');
         map.appendChild(textContainer);
-
         addLabels(allProvinces);
-
-        selectedDomain.name = 'Nilsvaar';
-        selectedDomain.domain = window.domains.domains[selectedDomain.name];
-        selectedDomain.regent = window.domains.regents[selectedDomain.domain.regent];
-
-        allProvinces.forEach((symbol) => {
-            const id = symbol.href.animVal;
-            const province = window.domains.provinces[id.substr(1)];
-            const domain = province && window.domains.domains[province.domain];
-            const regent = domain && window.domains.regents[domain.regent];
-            const lord = regent && regent.lord;
-            if (regent && regent.name === selectedDomain.regent.name) {
-                const color = swatches[0][0];
-                selectedDomain.provinces.push({id, color});
-            }
-            else if (lord === selectedDomain.regent.name) {
-                const index = selectedDomain.regent.vassals.findIndex((vassal) => vassal === regent.key);
-                const color = swatches[0][index + 1];
-                selectedDomain.provinces.push({id, color});
-            }
-            else {
-                return;
-            }
-
-            selectedDomain.provinces.forEach((province) => {
-                const id = province.id;
-                const color = province.color;
-                map.querySelectorAll(`${id} polygon`)
-                    .forEach((polygon) => polygon.attributes.fill.value = color);
-            });
-
-        });
+        selectDomain('Nilsvaar');
+        hideProvinces(hiddenProvinces);
     }
 
     /**
@@ -283,10 +260,12 @@ window.onload = () => {
                         text.setAttribute('stroke-width', '0.75');
                         // text.setAttribute('transform', 'scale(+1,-1)');
                         text.appendChild(textNode);
+                        console.log('textNode', textNode)
 
                         const group = map.querySelector(`${id.substr(1)}_text_group`) || document.createElementNS('http://www.w3.org/2000/svg', 'g');
                         group.setAttribute('id', `${id.substr(1)}_text_group`);
                         group.appendChild(text);
+                        console.log('text', text)
 
                         const symbolRoot = map.querySelector(id);
                         const wrapper = map.querySelector(`${id.substr(1)}_text_wrapper`) || document.createElementNS('http://www.w3.org/2000/svg', 'symbol');
@@ -377,8 +356,107 @@ window.onload = () => {
         return "#"+(0x1000000+(Math.round((R2-R1)*p)+R1)*0x10000+(Math.round((G2-G1)*p)+G1)*0x100+(Math.round((B2-B1)*p)+B1)).toString(16).substr(1);
     }
 
+    function clearProvinceEffects(provinces) {
+        while (provinces.length) {
+            const id = provinces.pop();
+            const color = getBaseColor(id, 'none');
+            map.querySelectorAll(`${id} polygon`)
+                .forEach((polygon) => polygon.attributes.fill.value = color);
+        }
+    }
+
+    function clearDisplayDetails() {
+        rawDataTextarea.value = '';
+    }
+
+    function hideProvinces(provinces) {
+        for (let i = 0; i < provinces.length; ++i) {
+            const id = provinces[i];
+            const polygons = map.querySelectorAll(`${id} polygon`);
+            polygons.forEach((polygon) => {
+                polygon.style.display = 'none';
+            });
+        }
+    }
+
+    function resetDisplay() {
+        gesture.rotation = 0;
+        gesture.scale = 1;
+        gesture.posX = 0;
+        gesture.posY = 0;
+        gesture.startRotation = 0;
+        gesture.startScale = 1;
+        gesture.startX = 0;
+        gesture.startY = 0;
+    }
+
+    function selectDomain(theDomain) {
+        selectedDomain.name = theDomain;
+        selectedDomain.domain = window.domains.domains[theDomain];
+        selectedDomain.regent = window.domains.regents[selectedDomain.domain.regent];
+
+        allProvinces.forEach((symbol) => {
+            const id = symbol.href.animVal;
+            const province = window.domains.provinces[id.substr(1)];
+            const domain = province && window.domains.domains[province.domain];
+            const regent = domain && window.domains.regents[domain.regent];
+            const lord = regent && regent.lord;
+            if (regent && regent.name === selectedDomain.regent.name) {
+                const color = swatches[0][0];
+                selectedDomain.provinces.push({id, color});
+            }
+            else if (lord && lord === selectedDomain.regent.name) {
+                const index = selectedDomain.regent.vassals.findIndex((vassal) => vassal === regent.key);
+                const color = swatches[0][index + 1];
+                selectedDomain.provinces.push({id, color});
+            }
+            else if (!province) {
+                hiddenProvinces.push(id);
+                return;
+            }
+            else {
+                return;
+            }
+        });
+
+        selectedDomain.provinces.forEach((province) => {
+            const id = province.id;
+            const color = province.color;
+            map.querySelectorAll(`${id} polygon`)
+                .forEach((polygon) => polygon.attributes.fill.value = color);
+        });
+    }
+
+    function selectProvince(provinceId) {
+        if (!selectedProvinces.some((selectedId) => selectedId === provinceId)) {
+            selectedProvinces.push(provinceId);
+        }
+        hoveredProvinces.some((hoveredId, index) => {
+            if (hoveredId === provinceId) {
+                // Prevent hover from updating color again
+                hoveredProvinces.splice(index);
+                return true;
+            }
+        });
+        displayProvinceDetails(provinceId)
+        highlightProvince(provinceId, 0.75);
+    }
+
+    function highlightProvince(provinceId, shade) {
+        map.querySelectorAll(`${provinceId} polygon`)
+            .forEach((polygon) => {
+                let color = getBaseColor(provinceId);
+                polygon.attributes.fill.value = shadeColor(color, shade);
+            });
+    }
+
+    function displayProvinceDetails(provinceId) {
+        const province = window.domains.provinces[provinceId.substr(1)];
+        rawDataTextarea.value = JSON.stringify(province, null, 2);
+    }
+
     const keydownEventListener = (event) => {
-        const scaleFactor = Math.log(gesture.scale * 2 + 1)/0.6931471806;
+        const scaleFactor = Math.log(gesture.scale * 2 + 1) / 0.6931471806 * (event.shiftKey && 0.25 || 1);
         switch (event.key) {
             case '+':
             case '=':
@@ -407,36 +485,37 @@ window.onload = () => {
                 event.preventDefault();
                 break;
             case 'Escape':
-                gesture.rotation = 0;
-                gesture.scale = 1;
-                gesture.posX = 0;
-                gesture.posY = 0;
-                gesture.startRotation = 0;
-                gesture.startScale = 1;
-                gesture.startX = 0;
-                gesture.startY = 0;
+                resetDisplay();
+                clearDisplayDetails();
+                clearProvinceEffects(selectedProvinces);
+                clearProvinceEffects(hoveredProvinces);
                 break;
+            default:
+                console.log(event.key);
         }
         render();
     }
-    window.addEventListener('keydown', (event) => console.log('window event', 'keydownEventListener') || keydownEventListener(event));
+    window.addEventListener('keydown', keydownEventListener);
+    mapContainer.contentDocument.addEventListener('keydown', keydownEventListener);
 
     /**
      * Zoom on wheel events. Trackpad pinch is a mouse wheel event with ctrl key pressed.
      **/
     const wheelEventListener = (event) => {
+        console.log('wheelEventListener')
         event.preventDefault();
-        const scaleFactor = Math.log(gesture.scale * 2 + 1)/0.6931471806;
         if (event.ctrlKey) {
-            gesture.scale -= event.deltaY * 0.01 * scaleFactor;
+            // Pinch gestures on trackpad
+            gesture.scale -= event.deltaY * 0.01;
         } else {
-            gesture.posX -= Math.sign(event.deltaX) * 50 * scaleFactor;
-            gesture.posY -= Math.sign(event.deltaY) * 50 * scaleFactor;
+            // Real mouse wheel or trackpad swipping
+            gesture.posX -= Math.sign(event.deltaX) * 50;
+            gesture.posY -= Math.sign(event.deltaY) * 50;
         }
 
         render();
     };
-    mapContainer.contentDocument.addEventListener('wheel', (event) => console.log('mapContainer event', 'wheelEventListener') || wheelEventListener(event));
+    mapContainer.contentDocument.addEventListener('wheel', wheelEventListener);
 
     /**
      * Start monitoring gesture start position to identify amount of X-Y panning and rotation
@@ -448,7 +527,7 @@ window.onload = () => {
         gesture.startRotation = gesture.rotation;
         gesture.startScale = gesture.scale;
     };
-    mapContainer.contentDocument.addEventListener('gesturestart', (event) => console.log('mapContainer event', 'gesturestartEventListener') || gesturestartEventListener(event));
+    mapContainer.contentDocument.addEventListener('gesturestart', gesturestartEventListener);
 
     /**
      * Update gesture position dif from start to identify X-Y panning and rotation.
@@ -464,7 +543,7 @@ window.onload = () => {
 
         render();
     };
-    mapContainer.contentDocument.addEventListener('gesturechange', (event) => console.log('mapContainer event', 'gesturechangeEventListener') || gesturechangeEventListener(event));
+    mapContainer.contentDocument.addEventListener('gesturechange', gesturechangeEventListener);
 
     /**
      * Prevent default gesture actions (like page scroll or navigation)
@@ -472,21 +551,16 @@ window.onload = () => {
     const gestureendEventListener = (event) => {
         event.preventDefault();
     };
-    mapContainer.contentDocument.addEventListener('gestureend', (event) => console.log('mapContainer event', 'gestureendEventListener') || gestureendEventListener(event));
+    mapContainer.contentDocument.addEventListener('gestureend', gestureendEventListener);
 
     /**
      * Identify the polygon under the mouse and highlight it
      **/
     const clickEventListener = (event) => {
-        event.preventDefault();
-
+        // event.preventDefault();
         // Clear current selectedProvinces highlight and then clear the list
-        while (selectedProvinces.length) {
-            const id = selectedProvinces.pop();
-            let color = getBaseColor(id, 'none');
-            map.querySelectorAll(`${id} polygon`)
-                .forEach((polygon) => polygon.attributes.fill.value = color);
-        }
+        clearProvinceEffects(selectedProvinces);
+        clearDisplayDetails();
 
         const mousePoint = {
             x: event.clientX,
@@ -496,31 +570,14 @@ window.onload = () => {
         getSymbolsAtPoint(allProvinces, mousePoint)
             .forEach((symbol) => {
                 const id = symbol.href.animVal;
-                selectedProvinces.push(id);
-                const index = hoveredProvinces.findIndex((hoveredId) => hoveredId === id);
-                if (index !== -1) {
-                    // Prevent hover from updating color again
-                    hoveredProvinces.splice(index);
-                }
-                map.querySelectorAll(`${id} polygon`)
-                    .forEach((polygon) => {
-                        let color = getBaseColor(id);
-                        polygon.attributes.fill.value = shadeColor(color, 0.75);
-                    });
+                selectProvince(id);
             });
     };
-    mapContainer.contentDocument.addEventListener('mousedown', (event) => console.log('mapContainer event', 'clickEventListener') || clickEventListener(event));
+    mapContainer.contentDocument.addEventListener('mousedown', clickEventListener);
 
     const mousemoveEventListener = (event) => {
-        event.preventDefault();
-
-       // Clear current hoveredProvinces highlight and then clear the list
-        while (hoveredProvinces.length) {
-            const id = hoveredProvinces.pop();
-            let color = getBaseColor(id, 'none');
-            map.querySelectorAll(`${id} polygon`)
-                .forEach((polygon) => polygon.attributes.fill.value = color);
-        }
+        // event.preventDefault();
+        clearProvinceEffects(hoveredProvinces);
 
         const mousePoint = {
             x: event.clientX,
@@ -532,15 +589,14 @@ window.onload = () => {
                 const id = symbol.href.animVal;
                 if (!selectedProvinces.some((selectedId) => selectedId === id)) {
                     const province = window.domains.provinces[id.substr(1)];
-                    rawDataTextarea.value = JSON.stringify(province, null, 2);
+                    if (!selectedProvinces.length) {
+                        // Display details of hovered province if no other province is selected
+                        rawDataTextarea.value = JSON.stringify(province, null, 2);
+                    }
                     hoveredProvinces.push(id);
-                    map.querySelectorAll(`${id} polygon`)
-                        .forEach((polygon) => {
-                            let color = getBaseColor(id);
-                            polygon.attributes.fill.value = shadeColor(color, 0.25);
-                        });
+                    highlightProvince(id, 0.25);
                 }
             });
     };
-    mapContainer.contentDocument.addEventListener('mousemove', (event) => console.log('mapContainer event', 'mousemoveEventListener') || mousemoveEventListener(event));
+    mapContainer.contentDocument.addEventListener('mousemove', mousemoveEventListener);
 };
