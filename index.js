@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const argv = require('minimist')(process.argv.slice(2));
 
 const logger = morgan('tiny');
-const serve = serveStatic('./public');
+const serve = serveStatic('./build');
 const server = http.createServer((req, res) => {
     const done = finalhandler(req, res);
     logger(req, res, (err) => {

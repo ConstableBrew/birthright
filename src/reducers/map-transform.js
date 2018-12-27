@@ -1,8 +1,13 @@
-export const actions = {
+const constants = {
     ADD_TRANSFORM: 'map-transform.ADD_TRANSFORM',
+    SET_TRANSFORM: 'map-transform.SET_TRANSFORM',
+    START_GESTURE: 'map-transform.START_GESTURE',
+};
+
+const actions = {
     addTransform({posX = 0, posY = 0, rotation = 0, scale = 0}) {
         return {
-            type: actions.TRANSLATE,
+            type: constants.ADD_TRANSFORM,
             posX,
             posY,
             rotation,
@@ -10,10 +15,9 @@ export const actions = {
         };
     },
 
-    SET_TRANSFORM: 'map-transform.SET_TRANSFORM',
     setTransform({posX = null, posY = null, rotation = null, scale = null}) {
         return {
-            type: actions.SET_TRANSFORM,
+            type: constants.SET_TRANSFORM,
             posX,
             posY,
             rotation,
@@ -21,10 +25,9 @@ export const actions = {
         };
     },
 
-    START_GESTURE: 'map-transform.START_GESTURE',
     startGesture({startX = 0, startY = 0, startRotation = 0, startScale = 0}) {
         return {
-            type: actions.START_GESTURE,
+            type: constants.START_GESTURE,
             startX,
             startY,
             startRotation,
@@ -44,9 +47,10 @@ const defaultState = {
     startY: 0,
 };
 
-export function mapTransform(state = {...defaultState}, action) {
+function mapTransform(state = {...defaultState}, action) {
+    console.log('mapTransform', action, state)
     switch (action.type) {
-        case actions.ADD_TRANSFORM:
+        case constants.ADD_TRANSFORM:
             return {
                 ...state,
                 posX: state.posX + +action.posX,
@@ -54,7 +58,7 @@ export function mapTransform(state = {...defaultState}, action) {
                 rotation: state.rotation + +action.rotation,
                 scale: state.scale + +action.scale,
             };
-        case actions.SET_TRANSFORM:
+        case constants.SET_TRANSFORM:
             return {
                 ...state,
                 posX: +(action.posX !== null ? action.posX : state.posX),
@@ -62,7 +66,7 @@ export function mapTransform(state = {...defaultState}, action) {
                 rotation: +(action.rotation !== null ? action.rotation : state.rotation),
                 scale: +(action.scale !== null ? action.scale : state.scale),
             };
-        case actions.START_GESTURE:
+        case constants.START_GESTURE:
             return {
                 ...state,
                 startX: +action.startX,
@@ -73,4 +77,10 @@ export function mapTransform(state = {...defaultState}, action) {
         default:
             return state;
     }
+}
+
+export {
+    constants,
+    actions,
+    mapTransform,
 }
